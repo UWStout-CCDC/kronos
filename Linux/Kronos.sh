@@ -1,10 +1,9 @@
 #!/bin/bash
-tput civis
 
 highlight_color=$(tput smso | sed -n l)
 highlight=${highlight_color::-1}
 
-scriptLocation="/ccdc/scripts/"
+scriptLocation="/ccdc/scripts/linux/kronos"
 
 #Print the Loading Screen
 loadingScreen() {
@@ -40,12 +39,16 @@ getCommandList() {
     commandSH=()
     commandSH+=(`ls $scriptLocation | grep .sh`)
 
-    for i in "${!commandSH[@]}"; do
-        source $scriptLocation${commandSH[$i]}
-        commandNames+=("$(getCommandName)")
-        printf "."
-    done
-
+    if [[ -d $scriptLocation ]]; then
+        for i in "${!commandSH[@]}"; do
+            source $scriptLocation${commandSH[$i]}
+            commandNames+=("$(getCommandName)")
+            printf "."
+        done
+    else
+        commandNames+=("Initialize Kronos")
+    fi
+   
     commands=("${commandNames[@]}")
     numCommands=$((${#commands[@]} + 2))
 }
@@ -111,12 +114,13 @@ drawStars() {
 drawSelection() {
     installSelection=$(($numCommands - 1))
 
+
     for i in "${!commands[@]}"; do
             
             [[ $selection == $(($i + 1)) ]] && center_text $((15 + i)) "[ ${commandNames[$i]} ]" true || center_text $((15 + i)) "     ${commandNames[$i]}     "
     done
 
-    [[ $selection == $installSelection ]] && center_text $((16 + ${#commands[@]})) "[ Install Scripts ]" true || center_text $((16 + ${#commands[@]})) "     Install Scripts      "
+    [[ $selection == $installSelection ]] && center_text $((16 + ${#commands[@]})) "[ Install Scripts ]" true || center_text $((16 + ${#commands[@]})) "      Install Scripts      "
     [[ $selection == $numCommands ]] && center_text $((17 + ${#commands[@]})) "[ EXIT ]" true || center_text $((17 + ${#commands[@]})) "     EXIT     "
 }
 
@@ -133,13 +137,26 @@ get_input() {
             ;;
         "")
             # Enter key
-            break
             ;;
     esac
 }
 
+kronosInit() {
+    echo "Initializing Kronos"
+}
 
-# Main loop
+
+# Main runable
+#Check if the user is root
+if [[ $EUID -ne 0 ]]
+then
+  printf 'Must be run as root, exiting!\n'
+  tput cnorm
+  exit 1
+fi
+
+#Run the Main Screen
+tput civis
 loadingScreen
 #sleep 1
 getCommandList
@@ -157,6 +174,10 @@ while true; do
             "A" | "B")
                 # User pressed arrow keys, update the menu
                 ;;
+            "")
+                # User pressed enter, execute the selected option
+                break
+                ;;
         esac
 
     done
@@ -165,10 +186,12 @@ while true; do
     tput cup $(( $(tput lines) - 3 )) 0
     if [[ $selection == $numCommands ]]; then
         tput cnorm
-        exit
+        exit 1
     elif [[ $selection == $(($numCommands - 1)) ]]; then
         echo "Installing Scripts Place Holder"
         tput cup 0 0
+    elif [[ ${commands[$(($selection - 1))]} == "Initialize Kronos" ]]; then
+        kronosInit
     else
         clear
         tput cup $(( $(tput lines) - 4 )) 0
