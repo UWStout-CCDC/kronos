@@ -6,10 +6,6 @@ highlight=${highlight_color::-1}
 
 scriptLocation="/ccdc/scripts/"
 
-commands=("peer" "org" "channel" "chaincode")
-numCommands=$((${#commands[@]} + 2))
-
-
 #Print the Loading Screen
 loadingScreen() {
     clear
@@ -73,22 +69,42 @@ center_text(){
 
 
 # Function to display the menu screen
-drawMenu() {
-    #clear
-    printf "%$(tput cols)s" | tr " " "-"
+drawLogo() {                       
 
-    center_text 4 "+----------------------------------+"
-    center_text 5 "|  _  __                           |"
-    center_text 6 "| | |/ /                           |"
-    center_text 7 "| | ' / _ __ ___  _ __   ___  ___  |"
-    center_text 8 "| |  < | '__/ _ \| '_ \ / _ \/ __| |"
-    center_text 9 "| | . \| | | (_) | | | | (_) \__ \ |"
-    center_text 10 "| |_|\_\_|  \___/|_| |_|\___/|___/ |"
-    center_text 11 "|                                  |"
-    center_text 12 "|                                  |"
-    center_text 13 "+----------------------------------+"
-   
+    #BLUE=$(tput setaf 183)
+    #WHITE=$(tput setaf 7)
+    NC='\033[0m'
+    BLUE='\033[0;34m'
+
+    echo -e $BLUE
+
+    center_text 4 "                              "
+    center_text 5 "    __ __                     "
+    center_text 6 "   / //________  ___ ___  ___ "
+    center_text 7 "  / ,< / __/ _ \/ _ / _ \(_-< "
+    center_text 8 " /_/|_/_/  \___/_//_\___/___/ "
+    center_text 9 "                              "
+    
+    echo -e $NC
 }
+
+#Function to draw stars randmly on the screen
+drawStars() {
+    #BLUE=$(tput setaf 183)
+    #WHITE=$(tput setaf 7)
+    NC='\033[0m'
+    CYAN='\033[0;36m'
+
+    echo -e $CYAN
+
+    for i in {1..100}; do
+        tput cup $((RANDOM % $(($(tput lines) - 1)))) $((RANDOM % $(tput cols)))
+        echo "."
+    done
+
+    echo -e $NC
+}
+
 
 
 # Function to display the menu with highlighting (it grabs the command names from when it checked the scripts)
@@ -96,12 +112,12 @@ drawSelection() {
     installSelection=$(($numCommands - 1))
 
     for i in "${!commands[@]}"; do
-            #[[ $selection == $(($i + 1)) ]] && center_text $((14 + i)) "[ Menu Function $(($i + 1)) ]" true || center_text $((14 + i)) "  Menu Function $(($i + 1))  "
-            [[ $selection == $(($i + 1)) ]] && center_text $((14 + i)) "[ ${commandNames[$i]} ]" true || center_text $((14 + i)) "     ${commandNames[$i]}     "
+            
+            [[ $selection == $(($i + 1)) ]] && center_text $((15 + i)) "[ ${commandNames[$i]} ]" true || center_text $((15 + i)) "     ${commandNames[$i]}     "
     done
 
-    [[ $selection == $installSelection ]] && center_text $((15 + ${#commands[@]})) "[ Install Scripts ]" true || center_text $((15 + ${#commands[@]})) "     Install Scripts      "
-    [[ $selection == $numCommands ]] && center_text $((16 + ${#commands[@]})) "[ EXIT ]" true || center_text $((16 + ${#commands[@]})) "     EXIT     "
+    [[ $selection == $installSelection ]] && center_text $((16 + ${#commands[@]})) "[ Install Scripts ]" true || center_text $((16 + ${#commands[@]})) "     Install Scripts      "
+    [[ $selection == $numCommands ]] && center_text $((17 + ${#commands[@]})) "[ EXIT ]" true || center_text $((17 + ${#commands[@]})) "     EXIT     "
 }
 
 # Function to get user input
@@ -125,15 +141,16 @@ get_input() {
 
 # Main loop
 loadingScreen
-sleep 1
+#sleep 1
 getCommandList
 selection=1
-clear
+clear 
+drawStars
+drawLogo
 while true; do
-    drawMenu
-    while true; do 
+    while true; do
         drawSelection
-        tput cup $(( $(tput lines) - 1 )) 0
+        tput cup $(( $(tput lines) - 2 )) 0
         get_input
 
         case $key in
@@ -160,5 +177,8 @@ while true; do
         read -n 1 -s -r -p "Press any key to continue..."
         clear
         tput cup 0 0
+        
+        drawStars
+        drawLogo
     fi
 done
