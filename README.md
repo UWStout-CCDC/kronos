@@ -1,7 +1,7 @@
 # comp-scripts
 Updated repository is for the main scripts that will be used in the actual competition environment
 
-Home of the in-development AiO Kronos.sh script for linux-based systems
+Home of the in-development All-in-One Kronos.sh script for linux-based systems
 
 ## TODO:
 - Create efficient organizational structure to store comp scripts
