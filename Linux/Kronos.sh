@@ -14,24 +14,25 @@ numCommands=$((${#commands[@]} + 2))
 loadingScreen() {
     clear
 
-    startLine=$((($(tput lines) - 15) / 2 - 7))                                                                          
-                                                                                                             
-    center_text $(($startLine + 0)) "KKKKKKKKK    KKKKKKK                                                                                         "
-    center_text $(($startLine + 1)) "K:::::::K    K:::::K                                                                                         "
-    center_text $(($startLine + 2)) "K:::::::K    K:::::K                                                                                         "
-    center_text $(($startLine + 3)) "K:::::::K   K::::::K                                                                                         "
-    center_text $(($startLine + 4)) "KK::::::K  K:::::KKKrrrrr   rrrrrrrrr      ooooooooooo   nnnn  nnnnnnnn       ooooooooooo       ssssssssss   "
-    center_text $(($startLine + 5)) "  K:::::K K:::::K   r::::rrr:::::::::r   oo:::::::::::oo n:::nn::::::::nn   oo:::::::::::oo   ss::::::::::s  "
-    center_text $(($startLine + 6)) "  K::::::K:::::K    r:::::::::::::::::r o:::::::::::::::on::::::::::::::nn o:::::::::::::::oss:::::::::::::s "
-    center_text $(($startLine + 7)) "  K:::::::::::K     rr::::::rrrrr::::::ro:::::ooooo:::::onn:::::::::::::::no:::::ooooo:::::os::::::ssss:::::s"
-    center_text $(($startLine + 8)) "  K:::::::::::K      r:::::r     r:::::ro::::o     o::::o  n:::::nnnn:::::no::::o     o::::o s:::::s  ssssss "
-    center_text $(($startLine + 9)) "  K::::::K:::::K     r:::::r     rrrrrrro::::o     o::::o  n::::n    n::::no::::o     o::::o   s::::::s      "
-    center_text $(($startLine + 10)) "  K:::::K K:::::K    r:::::r            o::::o     o::::o  n::::n    n::::no::::o     o::::o      s::::::s   "
-    center_text $(($startLine + 11)) "KK::::::K  K:::::KKK r:::::r            o::::o     o::::o  n::::n    n::::no::::o     o::::ossssss   s:::::s "
-    center_text $(($startLine + 12)) "K:::::::K   K::::::K r:::::r            o:::::ooooo:::::o  n::::n    n::::no:::::ooooo:::::os:::::ssss::::::s"
-    center_text $(($startLine + 13)) "K:::::::K    K:::::K r:::::r            o:::::::::::::::o  n::::n    n::::no:::::::::::::::os::::::::::::::s "
-    center_text $(($startLine + 14)) "K:::::::K    K:::::K r:::::r             oo:::::::::::oo   n::::n    n::::n oo:::::::::::oo  s:::::::::::ss  "
-    center_text $(($startLine + 15)) "KKKKKKKKK    KKKKKKK rrrrrrr               ooooooooooo     nnnnnn    nnnnnn   ooooooooooo     sssssssssss    "
+    startLine=$((($(tput lines) - 15) / 2 - 7))
+    if [[ $(tput cols) > 110 ]]; then
+        center_text $(($startLine + 0)) "KKKKKKKKK    KKKKKKK                                                                                         "
+        center_text $(($startLine + 1)) "K:::::::K    K:::::K                                                                                         "
+        center_text $(($startLine + 2)) "K:::::::K    K:::::K                                                                                         "
+        center_text $(($startLine + 3)) "K:::::::K   K::::::K                                                                                         "
+        center_text $(($startLine + 4)) "KK::::::K  K:::::KKKrrrrr   rrrrrrrrr      ooooooooooo   nnnn  nnnnnnnn       ooooooooooo       ssssssssss   "
+        center_text $(($startLine + 5)) "  K:::::K K:::::K   r::::rrr:::::::::r   oo:::::::::::oo n:::nn::::::::nn   oo:::::::::::oo   ss::::::::::s  "
+        center_text $(($startLine + 6)) "  K::::::K:::::K    r:::::::::::::::::r o:::::::::::::::on::::::::::::::nn o:::::::::::::::oss:::::::::::::s "
+        center_text $(($startLine + 7)) "  K:::::::::::K     rr::::::rrrrr::::::ro:::::ooooo:::::onn:::::::::::::::no:::::ooooo:::::os::::::ssss:::::s"
+        center_text $(($startLine + 8)) "  K:::::::::::K      r:::::r     r:::::ro::::o     o::::o  n:::::nnnn:::::no::::o     o::::o s:::::s  ssssss "
+        center_text $(($startLine + 9)) "  K::::::K:::::K     r:::::r     rrrrrrro::::o     o::::o  n::::n    n::::no::::o     o::::o   s::::::s      "
+        center_text $(($startLine + 10)) "  K:::::K K:::::K    r:::::r            o::::o     o::::o  n::::n    n::::no::::o     o::::o      s::::::s   "
+        center_text $(($startLine + 11)) "KK::::::K  K:::::KKK r:::::r            o::::o     o::::o  n::::n    n::::no::::o     o::::ossssss   s:::::s "
+        center_text $(($startLine + 12)) "K:::::::K   K::::::K r:::::r            o:::::ooooo:::::o  n::::n    n::::no:::::ooooo:::::os:::::ssss::::::s"
+        center_text $(($startLine + 13)) "K:::::::K    K:::::K r:::::r            o:::::::::::::::o  n::::n    n::::no:::::::::::::::os::::::::::::::s "
+        center_text $(($startLine + 14)) "K:::::::K    K:::::K r:::::r             oo:::::::::::oo   n::::n    n::::n oo:::::::::::oo  s:::::::::::ss  "
+        center_text $(($startLine + 15)) "KKKKKKKKK    KKKKKKK rrrrrrr               ooooooooooo     nnnnnn    nnnnnn   ooooooooooo     sssssssssss    "
+    fi
 
     tput cup $(($startLine + 20)) $(( ($(tput cols) - 7) /2 ))
     printf "Loading"
@@ -124,8 +125,8 @@ get_input() {
 
 # Main loop
 loadingScreen
-getCommandList
 sleep 1
+getCommandList
 selection=1
 clear
 while true; do
