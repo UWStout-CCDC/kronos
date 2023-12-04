@@ -1,5 +1,5 @@
-# comp-scripts
-Home of the in-development All-in-One Kronos.sh script for linux-based systems
+# kronos-linux
+Home of the in-development Kronos.sh All-in-One script for Linux-based systems
 
 ## TODO:
 - Create efficient organizational structure to store comp scripts
