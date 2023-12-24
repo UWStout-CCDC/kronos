@@ -70,6 +70,39 @@ center_text(){
     tput rc
 }
 
+triColomnText(){
+    row=$1
+    text=$2
+    text2=$3
+    text3=$4
+    selected=$5
+
+    tput sc
+
+    if [[ $selected == 1 ]]; then
+        echo -e $highlight
+    fi
+    tput cup $row $(( ($(tput cols) / 4 * 1 ) - ${#text} /2 ))
+    echo -e "$text"
+    echo -e $NC
+
+    if [[ $selected == 2 ]]; then
+        echo -e $highlight
+    fi
+    tput cup $row $(( ($(tput cols) / 4 * 2 ) - ${#text2} /2 ))
+    echo -e "$text2"
+    echo -e $NC
+
+    if [[ $selected == 3 ]]; then
+        echo -e $highlight
+    fi
+    tput cup $row $(( ($(tput cols) / 4 * 3 ) - ${#text3} /2 ))
+    echo -e "$text3"
+    echo -e $NC
+
+    tput rc
+}
+
 
 # Function to display the menu screen
 drawLogo() {                       
@@ -145,6 +178,152 @@ kronosInit() {
     echo "Initializing Kronos"
 }
 
+# Function to return the install text
+# Outputs to a variable returnInstallOutput
+returnInstallText() {
+    scriptPending=$1
+    scriptName=$2
+
+    if [[ $scriptName == "" ]]; then
+        returnInstallOutput=""
+    elif [[ $scriptPending == "true" ]]; then
+        returnInstallOutput="[X] ${scriptName}"
+    else
+        returnInstallOutput="[ ] ${scriptName}"
+    fi
+}
+
+
+# Function to draw the install page
+drawInstallPage(){
+    page=$1
+    section=$2
+    selection=$3
+
+    # Draw the page number
+    tput cup 0 $(( $(tput cols) / 2 - 5 ))
+    echo "Page $page"
+
+    # Draw the page headers
+    if [[ $page == 1 ]]; then
+        triColomnText 5 "General" "E-Comm" "Splunk"
+    elif [[ $page == 2 ]]; then
+        triColomnText 5 "General" "E-Comm" "Splunk"
+    fi
+
+    # Find the largest section and store the length of it
+    if [[ ${#generalName[@]} > ${#ecommName[@]} ]]; then
+        if [[ ${#generalName[@]} > ${#splunkName[@]} ]]; then
+            largestSection=${#generalName[@]}
+        else
+            largestSection=${#splunkName[@]}
+        fi
+    else
+        if [[ ${#ecommName[@]} > ${#splunkName[@]} ]]; then
+            largestSection=${#ecommName[@]}
+        else
+            largestSection=${#splunkName[@]}
+        fi
+    fi
+
+    # Draw the script names
+    # If the script is pending install, draw it with an [*] in front of it else draw it with an [ ] in front of it
+    # If the script is selected highlight it
+    for (( i=0; i<$largestSection; i++ )); do
+        if [[ $page == 1 ]]; then
+            returnInstallText ${generalPending[i]}, ${generalName[i]}
+            generalText=$returnInstallOutput
+            returnInstallText ${ecommPending[i]}, ${ecommName[i]}
+            ecommText=$returnInstallOutput
+            returnInstallText ${splunkPending[i]}, ${splunkName[i]}
+            splunkText=$returnInstallOutput
+
+            if [[ $selection == $(($i + 1)) ]]; then
+                triColomnText $(( 7 + $i )) "${generalText}" "${ecommText}" "${splunkText}" $section
+            else
+                triColomnText $(( 7 + $i )) "${generalText}" "${ecommText}" "${splunkText}"
+            fi
+        elif [[ $page == 2 ]]; then
+            echo ""
+        fi
+    done
+
+}
+
+
+# Function to install scripts
+scriptInstall() {
+    # The install will have a total of 6 columns, they are in order as follows 
+    # General | E-Comm | Splunk | Injects | Webserver | Email
+    # The script will only show 3 at a time, either left half or right half
+    # The user will be able to scroll through the options and select which ones they want to install
+    # Marking the ones they want to install with an X and install when they press enter
+    # Compatibilites will for now be checked by the script itself, but will be moved to the install script
+
+    # https://githubusercontent.com/UWStout-CCDC/kronos-linux/master/ = Default Prefix
+
+    # First the script will have to download a list of all the scripts that are available to install
+    wget -q https://raw.githubusercontent.com/CCDC-Tools/Kronos/master/scripts.txt -O /tmp/Scripts.txt
+
+    # Then it will have to parse the file and get the names of the scripts and the descriptions putting them into an array for each section its in
+    while read -r line; do 
+        IFS="," read -ra parsedLine <<< "$line"
+
+        if [[ ${parsedLine[2],,} == "general" ]]; then
+            generalLocation+=("${parsedLine[1]}")
+            generalName+=("${parsedLine[0]}")
+            generalPending+=("false")
+        elif [[ ${parsedLine[2],,} == "ecomm" ]]; then
+            ecommLocation+=("${parsedLine[1]}")
+            ecommName+=("${parsedLine[0]}")
+            ecommPending+=("false")
+        elif [[ ${parsedLine[2],,} == "splunk" ]]; then
+            splunkLocation+=("${parsedLine[1]}")
+            splunkName+=("${parsedLine[0]}")
+            splunkPending+=("false")
+        elif [[ ${parsedLine[2],,} == "injects" ]]; then
+            injectsLocation+=("${parsedLine[1]}")
+            injectsName+=("${parsedLine[0]}")
+            injectsPending+=("false")
+        elif [[ ${parsedLine[2],,} == "web" ]]; then
+            webserverLocation+=("${parsedLine[1]}")
+            webserverName+=("${parsedLine[0]}")
+            webserverPending+=("false")
+        elif [[ ${parsedLine[2],,} == "email" ]]; then
+            emailLocation+=("${parsedLine[1]}")
+            emailName+=("${parsedLine[0]}")
+            emailPending+=("false")
+        fi
+    done < "../testComaptible.list" # Change to /tmp/Scripts.txt
+
+    # Now that we have all the scripts in their respective arrays we can display them to the user
+    
+    # Hold a variable for the current page
+    page=1
+    # Hold a variable for the current section
+    sectionSelect=1
+    # Hold a variable for the current selection
+    selection=1
+
+    clear
+
+    # Draw the first page
+    drawStars
+    drawLogo
+    drawInstallPage $page $sectionSelect $selection
+
+    # triColomnText 5 "General" "E-Comm" "Splunk"
+
+
+
+    sleep 5
+
+}
+
+
+
+
+
 
 # Main runable
 #Check if the user is root
@@ -188,7 +367,7 @@ while true; do
         tput cnorm
         exit 1
     elif [[ $selection == $(($numCommands - 1)) ]]; then
-        echo "Installing Scripts Place Holder"
+        scriptInstall
         tput cup 0 0
     elif [[ ${commands[$(($selection - 1))]} == "Initialize Kronos" ]]; then
         kronosInit
