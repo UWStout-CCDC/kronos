@@ -42,7 +42,7 @@ getCommandList() {
     if [[ -d $scriptLocation ]]; then
         for i in "${!commandSH[@]}"; do
             source $scriptLocation${commandSH[$i]}
-            commandNames+=("$(getCommandName)")
+            commandNames+=("$getCommandName")
             printf "."
         done
     else
@@ -206,23 +206,39 @@ drawInstallPage(){
 
     # Draw the page headers
     if [[ $page == 1 ]]; then
-        triColomnText 5 "General" "E-Comm" "Splunk"
+        triColomnText 5 "  General  " "  E-Comm  " "Splunk  "
     elif [[ $page == 2 ]]; then
-        triColomnText 5 "Injects" "Webserver" "Email"
+        triColomnText 5 "  Injects  " "  Webserver  " "  Email  "
     fi
 
     # Find the largest section and store the length of it
-    if [[ ${#generalName[@]} > ${#ecommName[@]} ]]; then
-        if [[ ${#generalName[@]} > ${#splunkName[@]} ]]; then
-            largestSection=${#generalName[@]}
+    if [[ $page == 1 ]]; then
+        if [[ ${#generalName[@]} > ${#ecommName[@]} ]]; then
+            if [[ ${#generalName[@]} > ${#splunkName[@]} ]]; then
+                largestSection=${#generalName[@]}
+            else
+                largestSection=${#splunkName[@]}
+            fi
         else
-            largestSection=${#splunkName[@]}
+            if [[ ${#ecommName[@]} > ${#splunkName[@]} ]]; then
+                largestSection=${#ecommName[@]}
+            else
+                largestSection=${#splunkName[@]}
+            fi
         fi
-    else
-        if [[ ${#ecommName[@]} > ${#splunkName[@]} ]]; then
-            largestSection=${#ecommName[@]}
+    elif [[ $page == 2 ]]; then
+        if [[ ${#injectsName[@]} > ${#webserverName[@]} ]]; then
+            if [[ ${#injectsName[@]} > ${#emailName[@]} ]]; then
+                largestSection=${#injectsName[@]}
+            else
+                largestSection=${#emailName[@]}
+            fi
         else
-            largestSection=${#splunkName[@]}
+            if [[ ${#webserverName[@]} > ${#emailName[@]} ]]; then
+                largestSection=${#webserverName[@]}
+            else
+                largestSection=${#emailName[@]}
+            fi
         fi
     fi
 
@@ -231,11 +247,11 @@ drawInstallPage(){
     # If the script is selected highlight it
     for (( i=0; i<$largestSection; i++ )); do
         if [[ $page == 1 ]]; then
-            returnInstallText ${generalPending[i]}, ${generalName[i]}
+            returnInstallText ${generalPending[$i]} ${generalName[$i]}
             generalText=$returnInstallOutput
-            returnInstallText ${ecommPending[i]}, ${ecommName[i]}
+            returnInstallText ${ecommPending[$i]} ${ecommName[$i]}
             ecommText=$returnInstallOutput
-            returnInstallText ${splunkPending[i]}, ${splunkName[i]}
+            returnInstallText ${splunkPending[$i]} ${splunkName[$i]}
             splunkText=$returnInstallOutput
 
             if [[ $selection == $(($i + 1)) ]]; then
@@ -244,7 +260,18 @@ drawInstallPage(){
                 triColomnText $(( 7 + $i )) "${generalText}" "${ecommText}" "${splunkText}"
             fi
         elif [[ $page == 2 ]]; then
-            echo ""
+            returnInstallText ${injectsPending[$i]} ${injectsName[$i]}
+            injectsText=$returnInstallOutput
+            returnInstallText ${webserverPending[$i]} ${webserverName[$i]}
+            webserverText=$returnInstallOutput
+            returnInstallText ${emailPending[$i]} ${emailName[$i]}
+            emailText=$returnInstallOutput
+
+            if [[ $selection == $(($i + 1)) ]]; then
+                triColomnText $(( 7 + $i )) "${injectsText}" "${webserverText}" "${emailText}" $section
+            else
+                triColomnText $(( 7 + $i )) "${injectsText}" "${webserverText}" "${emailText}"
+            fi
         fi
     done
 
@@ -296,6 +323,7 @@ scriptInstall() {
         fi
     done < "../testComaptible.list" # Change to /tmp/Scripts.txt
 
+    
     # Now that we have all the scripts in their respective arrays we can display them to the user
     
     # Hold a variable for the current page
@@ -307,19 +335,31 @@ scriptInstall() {
 
     clear
 
-
     # Main Loop
+    drawStars
+    # drawLogo
 
     while true; do
         # Draw the first page
-        drawStars
-        drawLogo
         drawInstallPage $page $sectionSelect $selection
+        if [[ $page == 1 ]]; then
+            if [[ $sectionSelect == 1 ]]; then
+                numCommands=$((${#generalName[@]}))
+            elif [[ $sectionSelect == 2 ]]; then
+                numCommands=$((${#ecommName[@]}))
+            elif [[ $sectionSelect == 3 ]]; then
+                numCommands=$((${#splunkName[@]}))
+            fi
+        elif [[ $page == 2 ]]; then
+            numCommands=$((${#injectsName[@]} + 2))
+        fi
+
+        
 
         # Get the user input
         tput cup $(( $(tput lines) - 2 )) 0
-        read -rsn1 key
-        case $key in
+        read -rsn1 -d'' key
+        case $REPLY in
             "A") # Up arrow key
                 #selection=$(( (selection - 2 + $numCommands + 0) % (${#commands[@]} + 2) + 0 ))
                 selection=$(( (selection - 2 + $numCommands + 0) % $numCommands + 1 ))
@@ -328,21 +368,83 @@ scriptInstall() {
                 selection=$(( selection % $numCommands + 1 ))
                 ;;
             "C") # Right arrow key
-                if [[ $sectionSelect == 1 ]]; then
-                    sectionSelect=2
-                elif [[ $sectionSelect == 2 ]]; then
-                    sectionSelect=3
+                # If the user reaches the end of the page, go to the next page
+                if [[ $sectionSelect == 3 ]]; then
+                    if [[ $page == 1 ]]; then
+                        page=2
+                    else
+                        page=1
+                    fi
+                    clear
+                    drawStars
+                    sectionSelect=1
+                else
+                    sectionSelect=$(( sectionSelect + 1 ))
                 fi
+                
                 ;;
             "D") # Left arrow key
-                if [[ $sectionSelect == 3 ]]; then
-                    sectionSelect=2
-                elif [[ $sectionSelect == 2 ]]; then
-                    sectionSelect=1
+                # If the user reaches the beginning of the page, go to the previous page
+                if [[ $sectionSelect == 1 ]]; then
+                    if [[ $page == 1 ]]; then
+                        page=2
+                    else
+                        page=1
+                    fi
+                    clear
+                    drawStars
+                    sectionSelect=3
+                else
+                    sectionSelect=$(( sectionSelect - 1 ))
                 fi
                 ;;
-            "")
+            $'\x20')
+                # Space key
+                if [[ $page == 1 ]]; then
+                    if [[ $sectionSelect == 1 ]]; then
+                        if [[ ${generalPending[$(($selection - 1))]} == true ]]; then
+                            generalPending[$(($selection - 1))]=false;
+                        else
+                            generalPending[$(($selection - 1))]=true;
+                        fi
+                    elif [[ $sectionSelect == 2 ]]; then
+                        if [[ ${ecommPending[$(($selection - 1))]} == true ]]; then
+                            ecommPending[$(($selection - 1))]=false;
+                        else
+                            ecommPending[$(($selection - 1))]=true;
+                        fi
+                    elif [[ $sectionSelect == 3 ]]; then
+                        if [[ ${splunkPending[$(($selection - 1))]} == true ]]; then
+                            splunkPending[$(($selection - 1))]=false;
+                        else
+                            splunkPending[$(($selection - 1))]=true;
+                        fi
+                    fi
+                elif [[ $page == 2 ]]; then
+                    if [[ $sectionSelect == 1 ]]; then
+                        if [[ ${injectsPending[$(($selection - 1))]} == true ]]; then
+                            injectsPending[$(($selection - 1))]=false;
+                        else
+                            injectsPending[$(($selection - 1))]=true;
+                        fi
+                    elif [[ $sectionSelect == 2 ]]; then
+                        if [[ ${webserverPending[$(($selection - 1))]} == true ]]; then
+                            webserverPending[$(($selection - 1))]=false;
+                        else
+                            webserverPending[$(($selection - 1))]=true;
+                        fi
+                    elif [[ $sectionSelect == 3 ]]; then
+                        if [[ ${emailPending[$(($selection - 1))]} == true ]]; then
+                            emailPending[$(($selection - 1))]=false;
+                        else
+                            emailPending[$(($selection - 1))]=true;
+                        fi
+                    fi
+                fi
+                ;;
+            $'\x0a')
                 # Enter key
+                echo "Key Pressed: \"$key\""
                 break
                 ;;
         esac

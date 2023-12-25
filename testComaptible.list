@@ -8,15 +8,15 @@ Random Script,general/random.sh,General,debian;fedora
 Random Script,general/random.sh,General,debian;fedora
 Random Script,general/random.sh,General,debian;fedora
 
-Random Script,general/random.sh,ecomm,debian;fedora
-Random Script,general/random.sh,ecomm,debian;fedora
-Random Script,general/random.sh,ecomm,debian;fedora
-Random Script,general/random.sh,ecomm,debian;fedora
-Random Script,general/random.sh,ecomm,debian;fedora
-Random Script,general/random.sh,ecomm,debian;fedora
-Random Script,general/random.sh,ecomm,debian;fedora
-Random Script,general/random.sh,ecomm,debian;fedora
-Random Script,general/random.sh,ecomm,debian;fedora
+Random1 Script,general/random.sh,ecomm,debian;fedora
+Random2 Script,general/random.sh,ecomm,debian;fedora
+Random3 Script,general/random.sh,ecomm,debian;fedora
+Random4 Script,general/random.sh,ecomm,debian;fedora
+Random5 Script,general/random.sh,ecomm,debian;fedora
+Random6 Script,general/random.sh,ecomm,debian;fedora
+Random7 Script,general/random.sh,ecomm,debian;fedora
+Random8 Script,general/random.sh,ecomm,debian;fedora
+Random9 Script,general/random.sh,ecomm,debian;fedora
 
 Random Script,general/random.sh,web,debian;fedora
 Random Script,general/random.sh,web,debian;fedora
