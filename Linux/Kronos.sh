@@ -208,7 +208,7 @@ drawInstallPage(){
     if [[ $page == 1 ]]; then
         triColomnText 5 "General" "E-Comm" "Splunk"
     elif [[ $page == 2 ]]; then
-        triColomnText 5 "General" "E-Comm" "Splunk"
+        triColomnText 5 "Injects" "Webserver" "Email"
     fi
 
     # Find the largest section and store the length of it
@@ -307,16 +307,55 @@ scriptInstall() {
 
     clear
 
-    # Draw the first page
-    drawStars
-    drawLogo
-    drawInstallPage $page $sectionSelect $selection
 
-    # triColomnText 5 "General" "E-Comm" "Splunk"
+    # Main Loop
+
+    while true; do
+        # Draw the first page
+        drawStars
+        drawLogo
+        drawInstallPage $page $sectionSelect $selection
+
+        # Get the user input
+        tput cup $(( $(tput lines) - 2 )) 0
+        read -rsn1 key
+        case $key in
+            "A") # Up arrow key
+                #selection=$(( (selection - 2 + $numCommands + 0) % (${#commands[@]} + 2) + 0 ))
+                selection=$(( (selection - 2 + $numCommands + 0) % $numCommands + 1 ))
+                ;;
+            "B") # Down arrow key
+                selection=$(( selection % $numCommands + 1 ))
+                ;;
+            "C") # Right arrow key
+                if [[ $sectionSelect == 1 ]]; then
+                    sectionSelect=2
+                elif [[ $sectionSelect == 2 ]]; then
+                    sectionSelect=3
+                fi
+                ;;
+            "D") # Left arrow key
+                if [[ $sectionSelect == 3 ]]; then
+                    sectionSelect=2
+                elif [[ $sectionSelect == 2 ]]; then
+                    sectionSelect=1
+                fi
+                ;;
+            "")
+                # Enter key
+                break
+                ;;
+        esac
+    done
+
+    # # Draw the first page
+    # drawStars
+    # drawLogo
+    # drawInstallPage $page $sectionSelect $selection
 
 
 
-    sleep 5
+    # sleep 5
 
 }
 
