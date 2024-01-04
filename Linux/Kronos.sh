@@ -47,6 +47,12 @@ getCommandList() {
         done
     else
         commandNames+=("Initialize Kronos")
+        kronosNeedsInit=true
+        export kronosNeedsInit
+    fi
+
+    if [[ ${#commands[@]} == 0 ]]; then
+        commandNames+=("Initialize Kronos")
     fi
    
     commands=("${commandNames[@]}")
@@ -344,14 +350,14 @@ scriptInstall() {
         drawInstallPage $page $sectionSelect $selection
         if [[ $page == 1 ]]; then
             if [[ $sectionSelect == 1 ]]; then
-                numCommands=$((${#generalName[@]}))
+                numberCommands=$((${#generalName[@]}))
             elif [[ $sectionSelect == 2 ]]; then
-                numCommands=$((${#ecommName[@]}))
+                numberCommands=$((${#ecommName[@]}))
             elif [[ $sectionSelect == 3 ]]; then
-                numCommands=$((${#splunkName[@]}))
+                numberCommands=$((${#splunkName[@]}))
             fi
         elif [[ $page == 2 ]]; then
-            numCommands=$((${#injectsName[@]} + 2))
+            numberCommands=$((${#injectsName[@]} + 2))
         fi
 
         
@@ -362,10 +368,10 @@ scriptInstall() {
         case $REPLY in
             "A") # Up arrow key
                 #selection=$(( (selection - 2 + $numCommands + 0) % (${#commands[@]} + 2) + 0 ))
-                selection=$(( (selection - 2 + $numCommands + 0) % $numCommands + 1 ))
+                selection=$(( (selection - 2 + $numberCommands + 0) % $numberCommands + 1 ))
                 ;;
             "B") # Down arrow key
-                selection=$(( selection % $numCommands + 1 ))
+                selection=$(( selection % $numberCommands + 1 ))
                 ;;
             "C") # Right arrow key
                 # If the user reaches the end of the page, go to the next page
@@ -444,21 +450,81 @@ scriptInstall() {
                 ;;
             $'\x0a')
                 # Enter key
-                echo "Key Pressed: \"$key\""
+                # Install the scripts that are marked
+                # First gather all of the scripts that the user has selected
+
+                installScripts=()
+
+                # General Scripts
+                for (( i=0; i<${#generalPending[@]}; i++ )); do
+                    if [[ ${generalPending[$i]} == true ]]; then
+                        installScripts+=("${generalLocation[$i]}")
+                        scriptNames+=("${generalName[$i]}")
+                    fi
+                done
+
+                # E-Comm Scripts
+                for (( i=0; i<${#ecommPending[@]}; i++ )); do
+                    if [[ ${ecommPending[$i]} == true ]]; then
+                        installScripts+=("${ecommLocation[$i]}")
+                        scriptNames+=("${ecommName[$i]}")
+                    fi
+                done
+
+                # Splunk Scripts
+                for (( i=0; i<${#splunkPending[@]}; i++ )); do
+                    if [[ ${splunkPending[$i]} == true ]]; then
+                        installScripts+=("${splunkLocation[$i]}")
+                        scriptNames+=("${splunkName[$i]}")
+                    fi
+                done
+
+                # Injects Scripts
+                for (( i=0; i<${#injectsPending[@]}; i++ )); do
+                    if [[ ${injectsPending[$i]} == true ]]; then
+                        installScripts+=("${injectsLocation[$i]}")
+                        scriptNames+=("${injectsName[$i]}")
+                    fi
+                done
+
+                # Webserver Scripts
+                for (( i=0; i<${#webserverPending[@]}; i++ )); do
+                    if [[ ${webserverPending[$i]} == true ]]; then
+                        installScripts+=("${webserverLocation[$i]}")
+                        scriptNames+=("${webserverName[$i]}")
+                    fi
+                done
+
+                # Email Scripts
+                for (( i=0; i<${#emailPending[@]}; i++ )); do
+                    if [[ ${emailPending[$i]} == true ]]; then
+                        installScripts+=("${emailLocation[$i]}")
+                        scriptNames+=("${emailName[$i]}")
+                    fi
+                done
+
+                # Now that we have all the scripts that the user wants to install, we can install them
+                # We will be installing them in the default location of /ccdc/scripts/linux/kronos
+
+                # First we will check if the directory exists, if it does not we will create it
+                if [[ ! -d $scriptLocation ]]; then
+                    mkdir -p $scriptLocation
+                fi
+
+                echo "Downloading Scripts..."
+
+                # Now we will loop through the array of scripts and download them
+                for (( i=0; i<${#installScripts[@]}; i++ )); do
+                    echo "Downloading ${scriptNames[$i]}"
+                    wget -q https://raw.githubusercontent.com/CCDC-Tools/Kronos/master/${installScripts[$i]} --directory-prefix "$scriptLocation" --show-progress 2>&1 || echo "Failed to install ${scriptNames[$i]}"
+                done
+
+                sleep 1
+
                 break
                 ;;
         esac
     done
-
-    # # Draw the first page
-    # drawStars
-    # drawLogo
-    # drawInstallPage $page $sectionSelect $selection
-
-
-
-    # sleep 5
-
 }
 
 
@@ -508,8 +574,7 @@ while true; do
         tput cnorm
         exit 1
     elif [[ $selection == $(($numCommands - 1)) ]]; then
-        scriptInstall
-        tput cup 0 0
+        scriptInstall && clear && drawStars && drawLogo
     elif [[ ${commands[$(($selection - 1))]} == "Initialize Kronos" ]]; then
         kronosInit
     else
