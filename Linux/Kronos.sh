@@ -1,9 +1,11 @@
 #!/bin/bash
 
+currentDirectory=$(pwd)
+
 highlight_color=$(tput smso | sed -n l)
 highlight=${highlight_color::-1}
 
-scriptLocation="/ccdc/scripts/linux/kronos"
+scriptLocation="/ccdc/scripts/linux/kronos/"
 
 #Print the Loading Screen
 loadingScreen() {
@@ -42,21 +44,27 @@ getCommandList() {
     if [[ -d $scriptLocation ]]; then
         for i in "${!commandSH[@]}"; do
             source $scriptLocation${commandSH[$i]}
-            commandNames+=("$getCommandName")
+            commandNames+=${commandSH[$i] "getCommandName"}
             printf "."
         done
-    else
-        commandNames+=("Initialize Kronos")
-        kronosNeedsInit=true
-        export kronosNeedsInit
+    # else
+        # commandNames+=("Initialize Kronos")
+        # kronosNeedsInit=true
+        # export kronosNeedsInit
     fi
 
-    if [[ ${#commands[@]} == 0 ]]; then
+    if [[ ${#commandNames[@]} == 0 ]]; then
         commandNames+=("Initialize Kronos")
+        kronosNeedsInit=true
     fi
    
     commands=("${commandNames[@]}")
-    numCommands=$((${#commands[@]} + 2))
+    if [[ $kronosNeedsInit == true ]]; then
+        numCommands=$((${#commands[@]} + 1))
+    else
+        numCommands=$((${#commands[@]} + 2))
+    fi
+    
 }
 
 
@@ -158,8 +166,9 @@ drawSelection() {
             
             [[ $selection == $(($i + 1)) ]] && center_text $((15 + i)) "[ ${commandNames[$i]} ]" true || center_text $((15 + i)) "     ${commandNames[$i]}     "
     done
-
-    [[ $selection == $installSelection ]] && center_text $((16 + ${#commands[@]})) "[ Install Scripts ]" true || center_text $((16 + ${#commands[@]})) "      Install Scripts      "
+    if [[ $kronosNeedsInit != true ]]; then
+        [[ $selection == $installSelection ]] && center_text $((16 + ${#commands[@]})) "[ Install Scripts ]" true || center_text $((16 + ${#commands[@]})) "      Install Scripts      "
+    fi
     [[ $selection == $numCommands ]] && center_text $((17 + ${#commands[@]})) "[ EXIT ]" true || center_text $((17 + ${#commands[@]})) "     EXIT     "
 }
 
@@ -182,6 +191,12 @@ get_input() {
 
 kronosInit() {
     echo "Initializing Kronos"
+    # First we will check if the directory exists, if it does not we will create it
+    if [[ ! -d $scriptLocation ]]; then
+        mkdir -p $scriptLocation
+    fi
+    # Install the init script from github
+    $kronosNeedsInit = false
 }
 
 # Function to return the install text
@@ -253,11 +268,11 @@ drawInstallPage(){
     # If the script is selected highlight it
     for (( i=0; i<$largestSection; i++ )); do
         if [[ $page == 1 ]]; then
-            returnInstallText ${generalPending[$i]} ${generalName[$i]}
+            returnInstallText ${generalPending[$i]} "${generalName[$i]}"
             generalText=$returnInstallOutput
-            returnInstallText ${ecommPending[$i]} ${ecommName[$i]}
+            returnInstallText ${ecommPending[$i]} "${ecommName[$i]}"
             ecommText=$returnInstallOutput
-            returnInstallText ${splunkPending[$i]} ${splunkName[$i]}
+            returnInstallText ${splunkPending[$i]} "${splunkName[$i]}"
             splunkText=$returnInstallOutput
 
             if [[ $selection == $(($i + 1)) ]]; then
@@ -266,11 +281,11 @@ drawInstallPage(){
                 triColomnText $(( 7 + $i )) "${generalText}" "${ecommText}" "${splunkText}"
             fi
         elif [[ $page == 2 ]]; then
-            returnInstallText ${injectsPending[$i]} ${injectsName[$i]}
+            returnInstallText ${injectsPending[$i]} "${injectsName[$i]}"
             injectsText=$returnInstallOutput
-            returnInstallText ${webserverPending[$i]} ${webserverName[$i]}
+            returnInstallText ${webserverPending[$i]} "${webserverName[$i]}"
             webserverText=$returnInstallOutput
-            returnInstallText ${emailPending[$i]} ${emailName[$i]}
+            returnInstallText ${emailPending[$i]} "${emailName[$i]}"
             emailText=$returnInstallOutput
 
             if [[ $selection == $(($i + 1)) ]]; then
@@ -294,6 +309,9 @@ scriptInstall() {
     # Compatibilites will for now be checked by the script itself, but will be moved to the install script
 
     # https://githubusercontent.com/UWStout-CCDC/kronos-linux/master/ = Default Prefix
+
+    # TODO:
+    # At some point the names of the already installed scripts need to be found so the script can mark them as installed so they dont show up in the install list
 
     # First the script will have to download a list of all the scripts that are available to install
     wget -q https://raw.githubusercontent.com/CCDC-Tools/Kronos/master/scripts.txt -O /tmp/Scripts.txt
@@ -516,8 +534,12 @@ scriptInstall() {
                 # Now we will loop through the array of scripts and download them
                 for (( i=0; i<${#installScripts[@]}; i++ )); do
                     echo "Downloading ${scriptNames[$i]}"
-                    wget -q https://raw.githubusercontent.com/CCDC-Tools/Kronos/master/${installScripts[$i]} --directory-prefix "$scriptLocation" --show-progress 2>&1 || echo "Failed to install ${scriptNames[$i]}"
+                    # wget -q https://raw.githubusercontent.com/CCDC-Tools/Kronos/master/${installScripts[$i]} --directory-prefix "$scriptLocation" --show-progress 2>&1 || echo "Failed to install ${scriptNames[$i]}"
+                    wget -q https://raw.githubusercontent.com/UWStout-CCDC/CCDC-scripts-2020/master/${installScripts[$i]} --directory-prefix "$scriptLocation" 2>&1 || echo "Failed to install ${scriptNames[$i]}"
                 done
+
+                # Make all scripts in the directory executable
+                chmod +x $scriptLocation*.sh
 
                 sleep 1
 
@@ -573,6 +595,7 @@ while true; do
     if [[ $selection == $numCommands ]]; then
         tput cnorm
         exit 1
+    # elif [ $selection == $(($numCommands - 1)) ] && [ $kronosNeedsInit == false ]; then
     elif [[ $selection == $(($numCommands - 1)) ]]; then
         scriptInstall && clear && drawStars && drawLogo
     elif [[ ${commands[$(($selection - 1))]} == "Initialize Kronos" ]]; then
@@ -585,7 +608,14 @@ while true; do
         read -n 1 -s -r -p "Press any key to continue..."
         clear
         tput cup 0 0
-        
+
+        clear
+
+        # Run the script
+        # Source and then run the main does some funky things
+        bash $scriptLocation${commandSH[$(($selection - 1))]}
+        # Scripts do funky things
+        clear
         drawStars
         drawLogo
     fi
