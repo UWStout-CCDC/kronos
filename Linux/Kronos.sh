@@ -44,8 +44,9 @@ getCommandList() {
     if [[ -d $scriptLocation ]]; then
         for i in "${!commandSH[@]}"; do
             source $scriptLocation${commandSH[$i]}
-            commandNames+=${commandSH[$i] "getCommandName"}
-            printf "."
+            #get the command name from the script and put it into an array to be used later, to get the name of the command use getCommandName $scriptLocation${commandSH[$i]}
+            commandNames+=($(getCommandName $scriptLocation${commandSH[$i]}))
+            sleep 10
         done
     # else
         # commandNames+=("Initialize Kronos")
@@ -65,6 +66,13 @@ getCommandList() {
         numCommands=$((${#commands[@]} + 2))
     fi
     
+}
+
+getCommandName() {
+    file=$1
+
+    commandName=$(cat $1 | grep "getCommandName" | awk -F '"' '{print $2}')
+    echo $commandName
 }
 
 

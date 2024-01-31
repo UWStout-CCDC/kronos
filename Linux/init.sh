@@ -1,9 +1,6 @@
 #!/bin/bash
 
-if [[ $1 == "getCommandName" ]]; then
-    echo "InitBox"
-    return 0
-fi
+getCommandName="InitBox" # The name of the command that will be used to start the script
 
 echo "Hello World!"
 
