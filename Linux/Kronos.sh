@@ -46,7 +46,6 @@ getCommandList() {
             source $scriptLocation${commandSH[$i]}
             #get the command name from the script and put it into an array to be used later, to get the name of the command use getCommandName $scriptLocation${commandSH[$i]}
             commandNames+=($(getCommandName $scriptLocation${commandSH[$i]}))
-            sleep 10
         done
     # else
         # commandNames+=("Initialize Kronos")
@@ -232,6 +231,15 @@ drawInstallPage(){
     # Draw the page number
     tput cup 0 $(( $(tput cols) / 2 - 5 ))
     echo "Page $page"
+    # Draw the controls
+    tput cup 0 $(( $(tput cols) - 25 ))
+    echo "Arrow Keys to Navigate"
+    tput cup 1 $(( $(tput cols) - 25 ))
+    echo "Space to Select"
+    tput cup 2 $(( $(tput cols) - 25 ))
+    echo "Enter to Install Selected"
+    tput cup 3 $(( $(tput cols) - 25 ))
+    echo "Q to Quit"
 
     # Draw the page headers
     if [[ $page == 1 ]]; then
@@ -551,6 +559,10 @@ scriptInstall() {
 
                 sleep 1
 
+                break
+                ;;
+            # Also check for the q key to quit
+            "q")
                 break
                 ;;
         esac
