@@ -1,0 +1,52 @@
+Pull Script,linux/pull.sh,General,debian;fedora
+Random Script,general/random.sh,General,debian;fedora
+Random Script,general/random.sh,General,debian;fedora
+Random Script,general/random.sh,General,debian;fedora
+Random Script,general/random.sh,General,debian;fedora
+Random Script,general/random.sh,General,debian;fedora
+Random Script,general/random.sh,General,debian;fedora
+Random Script,general/random.sh,General,debian;fedora
+Random Script,general/random.sh,General,debian;fedora
+
+Random1 Script,ecomm/random.sh,ecomm,debian;fedora
+Random2 Script,ecomm/random.sh,ecomm,debian;fedora
+Random3 Script,ecomm/random.sh,ecomm,debian;fedora
+Random4 Script,ecomm/random.sh,ecomm,debian;fedora
+Random5 Script,ecomm/random.sh,ecomm,debian;fedora
+Random6 Script,ecomm/random.sh,ecomm,debian;fedora
+Random7 Script,ecomm/random.sh,ecomm,debian;fedora
+Random8 Script,ecomm/random.sh,ecomm,debian;fedora
+Random9 Script,ecomm/random.sh,ecomm,debian;fedora
+
+Random Script,general/random.sh,web,debian;fedora
+Random Script,general/random.sh,web,debian;fedora
+Random Script,general/random.sh,web,debian;fedora
+Random Script,general/random.sh,web,debian;fedora
+Random Script,general/random.sh,web,debian;fedora
+Random Script,general/random.sh,web,debian;fedora
+Random Script,general/random.sh,web,debian;fedora
+Random Script,general/random.sh,web,debian;fedora
+
+Random Script,general/random.sh,Splunk,debian;fedora
+Random Script,general/random.sh,Splunk,debian;fedora
+Random Script,general/random.sh,Splunk,debian;fedora
+Random Script,general/random.sh,Splunk,debian;fedora
+Random Script,general/random.sh,Splunk,debian;fedora
+Random Script,general/random.sh,Splunk,debian;fedora
+Random Script,general/random.sh,Splunk,debian;fedora
+
+Random Script,general/random.sh,email,debian;fedora
+Random Script,general/random.sh,email,debian;fedora
+Random Script,general/random.sh,email,debian;fedora
+Random Script,general/random.sh,email,debian;fedora
+Random Script,general/random.sh,email,debian;fedora
+Random Script,general/random.sh,email,debian;fedora
+Random Script,general/random.sh,email,debian;fedora
+
+Random Script,general/random.sh,Injects,debian;fedora
+Random Script,general/random.sh,Injects,debian;fedora
+Random Script,general/random.sh,Injects,debian;fedora
+Random Script,general/random.sh,Injects,debian;fedora
+Random Script,general/random.sh,Injects,debian;fedora
+Random Script,general/random.sh,Injects,debian;fedora
+Random Script,general/random.sh,Injects,debian;fedora
