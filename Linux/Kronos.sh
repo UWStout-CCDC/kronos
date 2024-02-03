@@ -44,9 +44,9 @@ getCommandList() {
 
     if [[ -d $scriptLocation ]]; then
         for i in "${!commandSH[@]}"; do
-            source $scriptLocation${commandSH[$i]}
-            commandNames+=${commandSH[$i] "getCommandName"}
-            printf "."
+            # source $scriptLocation${commandSH[$i]}
+            #get the command name from the script and put it into an array to be used later, to get the name of the command use getCommandName $scriptLocation${commandSH[$i]}
+            commandNames+=("$(getCommandName $scriptLocation${commandSH[$i]})")
         done
     # else
         # commandNames+=("Initialize Kronos")
@@ -66,6 +66,14 @@ getCommandList() {
         numCommands=$((${#commands[@]} + 2))
     fi
     
+}
+
+getCommandName() {
+    file=$1
+
+    # commandName=$(cat $file | grep "getCommandName=" | sed 's/getCommandName=//g')
+    commandName=$(cat $1 | grep "getCommandName" | awk -F"=" '{print $2}' | sed 's/\"//g')
+    echo $commandName
 }
 
 
@@ -225,6 +233,15 @@ drawInstallPage(){
     # Draw the page number
     tput cup 0 $(( $(tput cols) / 2 - 5 ))
     echo "Page $page"
+    # Draw the controls
+    tput cup 0 $(( $(tput cols) - 25 ))
+    echo "Arrow Keys to Navigate"
+    tput cup 1 $(( $(tput cols) - 25 ))
+    echo "Space to Select"
+    tput cup 2 $(( $(tput cols) - 25 ))
+    echo "Enter to Install Selected"
+    tput cup 3 $(( $(tput cols) - 25 ))
+    echo "Q to Quit"
 
     # Draw the page headers
     if [[ $page == 1 ]]; then
@@ -308,6 +325,27 @@ scriptInstall() {
     # The user will be able to scroll through the options and select which ones they want to install
     # Marking the ones they want to install with an X and install when they press enter
     # Compatibilites will for now be checked by the script itself, but will be moved to the install script
+
+    # Clear all of the old arrays
+    generalLocation=()
+    generalName=()
+    generalPending=()
+    ecommLocation=()
+    ecommName=()
+    ecommPending=()
+    splunkLocation=()
+    splunkName=()
+    splunkPending=()
+    injectsLocation=()
+    injectsName=()
+    injectsPending=()
+    webserverLocation=()
+    webserverName=()
+    webserverPending=()
+    emailLocation=()
+    emailName=()
+    emailPending=()
+    
 
     # https://githubusercontent.com/UWStout-CCDC/kronos-linux/master/ = Default Prefix
 
@@ -546,6 +584,10 @@ scriptInstall() {
 
                 break
                 ;;
+            # Also check for the q key to quit
+            "q")
+                break
+                ;;
         esac
     done
 }
@@ -603,19 +645,16 @@ while true; do
         kronosInit
     else
         clear
-        tput cup $(( $(tput lines) - 4 )) 0
-        echo "You selected Option $scriptLocation${commandSH[$(($selection - 1))]}"
-        echo "$selection"
-        read -n 1 -s -r -p "Press any key to continue..."
-        clear
-        tput cup 0 0
-
-        clear
-
+        tput cnorm
         # Run the script
         # Source and then run the main does some funky things
         bash $scriptLocation${commandSH[$(($selection - 1))]}
+        
+        echo "Press any key to continue..."
+        read -n 1 -s
+        sleep 1
         # Scripts do funky things
+        tput civis
         clear
         drawStars
         drawLogo
