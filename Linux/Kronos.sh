@@ -325,6 +325,27 @@ scriptInstall() {
     # Marking the ones they want to install with an X and install when they press enter
     # Compatibilites will for now be checked by the script itself, but will be moved to the install script
 
+    # Clear all of the old arrays
+    generalLocation=()
+    generalName=()
+    generalPending=()
+    ecommLocation=()
+    ecommName=()
+    ecommPending=()
+    splunkLocation=()
+    splunkName=()
+    splunkPending=()
+    injectsLocation=()
+    injectsName=()
+    injectsPending=()
+    webserverLocation=()
+    webserverName=()
+    webserverPending=()
+    emailLocation=()
+    emailName=()
+    emailPending=()
+    
+
     # https://githubusercontent.com/UWStout-CCDC/kronos-linux/master/ = Default Prefix
 
     # TODO:
