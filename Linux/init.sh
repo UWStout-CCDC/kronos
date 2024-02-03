@@ -327,16 +327,34 @@ systemctl enable ccdc_firewall.service
 # Set legal banners
 echo "Setting legal banners..."
 cat <<-EOF > /etc/issue
-This system is for the use of authorized users only. Individuals using this computer system without authority, or in excess of their authority, are subject to having all of their activities on this system monitored and recorded by system personnel. In the course of monitoring individuals improperly using this system, or in the course of system maintenance, the activities of authorized users may also be monitored. Anyone using this system expressly consents to such monitoring and is advised that if such monitoring reveals possible evidence of criminal activity, system personnel may provide the evidence of such monitoring to law enforcement officials.
+UNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED
+
+You must have explicit, authorized permission to access or configure this device.
+Unauthorized attempts and actions to access or use this system may result in civil
+and/or criminal penalties.
+
+All activities performed on this device are logged and monitored.
 EOF
 cat <<-EOF > /etc/issue.net
-This system is for the use of authorized users only. Individuals using this computer system without authority, or in excess of their authority, are subject to having all of their activities on this system monitored and recorded by system personnel. In the course of monitoring individuals improperly using this system, or in the course of system maintenance, the activities of authorized users may also be monitored. Anyone using this system expressly consents to such monitoring and is advised that if such monitoring reveals possible evidence of criminal activity, system personnel may provide the evidence of such monitoring to law enforcement officials.
+UNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED
+
+You must have explicit, authorized permission to access or configure this device.
+Unauthorized attempts and actions to access or use this system may result in civil
+and/or criminal penalties.
+
+All activities performed on this device are logged and monitored.
 EOF
 
 # Set the motd
 echo "Setting the motd..."
 cat <<-EOF > /etc/motd
-This system is for the use of authorized users only. Individuals using this computer system without authority, or in excess of their authority, are subject to having all of their activities on this system monitored and recorded by system personnel. In the course of monitoring individuals improperly using this system, or in the course of system maintenance, the activities of authorized users may also be monitored. Anyone using this system expressly consents to such monitoring and is advised that if such monitoring reveals possible evidence of criminal activity, system personnel may provide the evidence of such monitoring to law enforcement officials.
+UNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED
+
+You must have explicit, authorized permission to access or configure this device.
+Unauthorized attempts and actions to access or use this system may result in civil
+and/or criminal penalties.
+
+All activities performed on this device are logged and monitored.
 EOF
 
 ############# CONFIGURE SERVICES #############
