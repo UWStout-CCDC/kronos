@@ -43,9 +43,9 @@ getCommandList() {
 
     if [[ -d $scriptLocation ]]; then
         for i in "${!commandSH[@]}"; do
-            source $scriptLocation${commandSH[$i]}
+            # source $scriptLocation${commandSH[$i]}
             #get the command name from the script and put it into an array to be used later, to get the name of the command use getCommandName $scriptLocation${commandSH[$i]}
-            commandNames+=($(getCommandName $scriptLocation${commandSH[$i]}))
+            commandNames+=("$(getCommandName $scriptLocation${commandSH[$i]})")
         done
     # else
         # commandNames+=("Initialize Kronos")
@@ -70,7 +70,8 @@ getCommandList() {
 getCommandName() {
     file=$1
 
-    commandName=$(cat $1 | grep "getCommandName" | awk -F '"' '{print $2}')
+    # commandName=$(cat $file | grep "getCommandName=" | sed 's/getCommandName=//g')
+    commandName=$(cat $1 | grep "getCommandName" | awk -F"=" '{print $2}' | sed 's/\"//g')
     echo $commandName
 }
 
@@ -622,19 +623,16 @@ while true; do
         kronosInit
     else
         clear
-        tput cup $(( $(tput lines) - 4 )) 0
-        echo "You selected Option $scriptLocation${commandSH[$(($selection - 1))]}"
-        echo "$selection"
-        read -n 1 -s -r -p "Press any key to continue..."
-        clear
-        tput cup 0 0
-
-        clear
-
+        tput cnorm
         # Run the script
         # Source and then run the main does some funky things
         bash $scriptLocation${commandSH[$(($selection - 1))]}
+        
+        echo "Press any key to continue..."
+        read -n 1 -s
+        sleep 1
         # Scripts do funky things
+        tput civis
         clear
         drawStars
         drawLogo

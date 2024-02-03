@@ -27,8 +27,10 @@ if [ $CHOICE -eq 1 ]; then
     mysql -u $SQLUSER -p$SQLPASSWORD -D prestashop <<EOF
 UPDATE employee SET passwd='%%%%%%%' WHERE id_employee='1';
 EOF
+
+    echo "Authentication broken."
     exit 0
-else if [ $CHOICE -eq 2 ]; then
+elif [ $CHOICE -eq 2 ]; then
     echo "Changing the admin password..."
     read -s -p "Enter the new password for the admin user: " NEW
     clear
@@ -39,12 +41,11 @@ else if [ $CHOICE -eq 2 ]; then
     # Update the database
     echo "Updating the database..."
     mysql -u $SQLUSER -p$SQLPASSWORD -D prestashop <<EOF
-    UPDATE employee SET passwd=$NEW WHERE id_employee='1';
+UPDATE employee SET passwd=$NEW WHERE id_employee='1';
 EOF
+    echo "Password updated."
     exit 0
 else
     echo "Invalid choice."
     exit 1
 fi
-
-
