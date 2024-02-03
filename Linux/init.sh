@@ -400,6 +400,5 @@ fi
 
 # Tell the user that they need to reboot
 echo "The system has been configured. Please reboot the system to apply the changes. You will be redirected to the main menu."
-sleep 10
 
 

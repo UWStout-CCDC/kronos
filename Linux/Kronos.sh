@@ -5,9 +5,8 @@ currentDirectory=$(pwd)
 highlight_color=$(tput smso | sed -n l)
 highlight=${highlight_color::-1}
 
-#scriptLocation="/ccdc/scripts/Linux/kronos"
-#scriptLocation="./general/"
-scriptLocation="./scripts/"
+scriptLocation="./Linux/scripts/"
+# scriptLocation="/ccdc/scripts/linux/kronos/"
 
 #Print the Loading Screen
 loadingScreen() {
@@ -650,9 +649,6 @@ while true; do
         # Run the script
         # Source and then run the main does some funky things
         bash $scriptLocation${commandSH[$(($selection - 1))]}
-        
-        echo "Press any key to continue..."
-        read -n 1 -s
         sleep 1
         # Scripts do funky things
         tput civis
