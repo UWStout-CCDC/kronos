@@ -5,8 +5,9 @@ currentDirectory=$(pwd)
 highlight_color=$(tput smso | sed -n l)
 highlight=${highlight_color::-1}
 
-#scriptLocation="/ccdc/scripts/linux/kronos/"
-scriptLocation="./general/"
+#scriptLocation="/ccdc/scripts/Linux/kronos"
+#scriptLocation="./general/"
+scriptLocation="./scripts/"
 
 #Print the Loading Screen
 loadingScreen() {
