@@ -1,4 +1,6 @@
-Pull Script,linux/pull.sh,General,debian;fedora
+Change Admin Password,Linux/CentOS-Ecomm/ecommChangeAdmin.sh,ecomm,fedora
+Monitor,General/monitor.sh,General,debian;fedora;Ubuntu
+
 Random Script,general/random.sh,General,debian;fedora
 Random Script,general/random.sh,General,debian;fedora
 Random Script,general/random.sh,General,debian;fedora
