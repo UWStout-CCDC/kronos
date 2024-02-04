@@ -5,9 +5,9 @@ currentDirectory=$(pwd)
 highlight_color=$(tput smso | sed -n l)
 highlight=${highlight_color::-1}
 
-#scriptLocation="/ccdc/scripts/Linux/kronos"
-#scriptLocation="./general/"
-scriptLocation="./scripts/"
+scriptLocation="/ccdc/scripts/"
+githubURL="https://raw.githubusercontent.com/UWStout-CCDC/kronos/master/"
+# scriptLocation="/ccdc/scripts/linux/kronos/"
 
 #Print the Loading Screen
 loadingScreen() {
@@ -73,7 +73,7 @@ getCommandName() {
     file=$1
 
     # commandName=$(cat $file | grep "getCommandName=" | sed 's/getCommandName=//g')
-    commandName=$(cat $1 | grep "getCommandName" | awk -F"=" '{print $2}' | sed 's/\"//g')
+    commandName=$(cat $1 | grep "getCommandName=" -m 1 | awk -F"=" '{print $2}' | sed 's/\"//g')
     echo $commandName
 }
 
@@ -201,6 +201,8 @@ get_input() {
 
 kronosInit() {
     echo "Initializing Kronos"
+    # Install the init script from github
+    wget -q $githubURL/init.sh --directory-prefix "$scriptLocation" --show-progress 2>&1 || echo "Failed to install Kronos Init"
     # First we will check if the directory exists, if it does not we will create it
     if [[ ! -d $scriptLocation ]]; then
         mkdir -p $scriptLocation
@@ -354,7 +356,7 @@ scriptInstall() {
     # At some point the names of the already installed scripts need to be found so the script can mark them as installed so they dont show up in the install list
 
     # First the script will have to download a list of all the scripts that are available to install
-    wget -q https://raw.githubusercontent.com/CCDC-Tools/Kronos/master/scripts.txt -O /tmp/Scripts.txt
+    wget -q $githubURL/scripts.list -O /tmp/Scripts.txt
 
     # Then it will have to parse the file and get the names of the scripts and the descriptions putting them into an array for each section its in
     while read -r line; do 
@@ -385,7 +387,7 @@ scriptInstall() {
             emailName+=("${parsedLine[0]}")
             emailPending+=("false")
         fi
-    done < "../testComaptible.list" # Change to /tmp/Scripts.txt
+    done < "./scripts.list" # Change to /tmp/Scripts.txt
 
     
     # Now that we have all the scripts in their respective arrays we can display them to the user
@@ -575,7 +577,7 @@ scriptInstall() {
                 for (( i=0; i<${#installScripts[@]}; i++ )); do
                     echo "Downloading ${scriptNames[$i]}"
                     # wget -q https://raw.githubusercontent.com/CCDC-Tools/Kronos/master/${installScripts[$i]} --directory-prefix "$scriptLocation" --show-progress 2>&1 || echo "Failed to install ${scriptNames[$i]}"
-                    wget -q https://raw.githubusercontent.com/UWStout-CCDC/CCDC-scripts-2020/master/${installScripts[$i]} --directory-prefix "$scriptLocation" 2>&1 || echo "Failed to install ${scriptNames[$i]}"
+                    wget -q $githubURL/${installScripts[$i]} --directory-prefix "$scriptLocation" --show-progress 2>&1 || echo "Failed to install ${scriptNames[$i]}"
                 done
 
                 # Make all scripts in the directory executable
@@ -650,9 +652,6 @@ while true; do
         # Run the script
         # Source and then run the main does some funky things
         bash $scriptLocation${commandSH[$(($selection - 1))]}
-        
-        echo "Press any key to continue..."
-        read -n 1 -s
         sleep 1
         # Scripts do funky things
         tput civis
@@ -661,3 +660,7 @@ while true; do
         drawLogo
     fi
 done
+
+
+
+# He he he 666
