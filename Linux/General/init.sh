@@ -1,7 +1,7 @@
 #!/bin/bash
 
-getCommandName="InitBox" # The name of the command that will be used to start the script
-
+# The name of the command that will be used to start the script
+getCommandName="InitBox"
 
 # define important variables
 CCDC_DIR="/ccdc"
@@ -13,16 +13,16 @@ SYSTEM_SCRIPT_DIR="$CCDC_DIR/systemscripts"
 # Verry first, change the root user
 # Ask for new root password
 while true; do
-    clear
     echo "Please enter the new root password:"
-    read -s -p "Enter the new root password: "
+    read -s -p "Enter the new root password: " PASSWORD
     echo
-    read -s -p "Confirm the new root password: "
+    read -s -p "Confirm the new root password: " CONFIRM_PASSWORD
     echo
 
     if [ "$PASSWORD" = "$CONFIRM_PASSWORD" ]; then
         break
     else
+        clear
         echo "Passwords do not match. Please try again."
     fi
 done
@@ -86,11 +86,12 @@ clear
 # Now we need to get the user input
 echo "Please enter the following information to create new root user:"
 read -p "Enter the username for the new root user: " USERNAME
+clear
 
 while true; do
-    clear
+    
     echo "Enter the username for the new root user: " $USERNAME
-    read -s -p "Enter the password for the new root user: " PASSWORD
+    read -s -p "Enter the password: " PASSWORD
     echo
     read -s -p "Confirm password: " CONFIRM_PASSWORD
     echo
@@ -98,6 +99,7 @@ while true; do
     if [ "$PASSWORD" = "$CONFIRM_PASSWORD" ]; then
         break
     else
+        clear
         echo "Passwords do not match. Please try again."
     fi
 done
@@ -124,7 +126,7 @@ clear
 
 # Generate the script directory if it doesn't exist, and restrict access to root
 echo "Generating the ccdc directory..."
-if [ ! -d $SCRIPT_DIR || ! -d $CCDC_ETC || ! -d $SYSTEM_SCRIPT_DIR ]; then
+if [[ ! -d $SCRIPT_DIR || ! -d $CCDC_ETC || ! -d $SYSTEM_SCRIPT_DIR ]]; then
     mkdir $SCRIPT_DIR
     chown root:root $SCRIPT_DIR
     chmod 700 $SCRIPT_DIR
@@ -154,7 +156,7 @@ Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/
 
 # User privilege specification
 root    ALL=(ALL:ALL) ALL
-$username ALL=(ALL:ALL) ALL
+$USERNAME ALL=(ALL:ALL) ALL
 
 # Allow members of group sudo to execute any command
 %sudo   ALL=(ALL:ALL) ALL
@@ -184,14 +186,16 @@ echo "Creating the nologin script..."
 cat <<-EOF > $SCRIPT_DIR/nologin.sh
 #!/bin/bash
 getCommandName="nologin users"
-for user in $(awk -F: '{print $1}' /etc/passwd); do
-    if [ $user != $USERNAME ]; then
-        usermod -s $SYSTEM_SCRIPT_DIR/nologin.sh $user
+for user in \$(awk -F: '{print \$1}' /etc/passwd); do
+    if [ \$user != $USERNAME ]; then
+        usermod -s $SYSTEM_SCRIPT_DIR/nologin.sh \$user
     fi
 done
 EOF
+
 # Run the nologin script
 echo "Running the nologin script..."
+bash $SCRIPT_DIR/nologin.sh
 
 # Create the script to configure the firewall
 echo "Creating the firewall configuration script..."
@@ -324,38 +328,25 @@ EOF
 echo "Enabling the firewall service..."
 systemctl enable ccdc_firewall.service
 
+legalBanner=<<-EOF
+UNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED
+
+You must have explicit, authorized permission to access or configure this device.
+Unauthorized attempts and actions to access or use this system may result in civil
+and/or criminal penalties.
+
+All activities performed on this device are logged and monitored.
+EOF
+
 # Set legal banners
 echo "Setting legal banners..."
-cat <<-EOF > /etc/issue
-UNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED
-
-You must have explicit, authorized permission to access or configure this device.
-Unauthorized attempts and actions to access or use this system may result in civil
-and/or criminal penalties.
-
-All activities performed on this device are logged and monitored.
-EOF
-cat <<-EOF > /etc/issue.net
-UNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED
-
-You must have explicit, authorized permission to access or configure this device.
-Unauthorized attempts and actions to access or use this system may result in civil
-and/or criminal penalties.
-
-All activities performed on this device are logged and monitored.
-EOF
+echo $legalBanner > /etc/issue
+echo $legalBanner > /etc/issue.net
 
 # Set the motd
 echo "Setting the motd..."
-cat <<-EOF > /etc/motd
-UNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED
+echo $legalBanner > /etc/motd
 
-You must have explicit, authorized permission to access or configure this device.
-Unauthorized attempts and actions to access or use this system may result in civil
-and/or criminal penalties.
-
-All activities performed on this device are logged and monitored.
-EOF
 
 ############# CONFIGURE SERVICES #############
 if type systemctl 
@@ -381,11 +372,11 @@ fi
 if type yum
 then
     echo "Updating the system..."
-    yum update -y
+    yum update -y && yum upgrade -y
 elif type apt-get
 then
     echo "Updating the system..."
-    apt-get update -y
+    apt-get update -y && apt-get upgrade -y
 else
     echo "Could not update the system. Please update it manually. Continuing..."
     sleep 3
@@ -399,6 +390,8 @@ if [ $installSplunkForward ]; then
 fi
 
 # Tell the user that they need to reboot
+echo
+echo
 echo "The system has been configured. Please reboot the system to apply the changes. You will be redirected to the main menu."
-
-
+# Wait for user input to continue
+read -p "Press [Enter] to continue..."

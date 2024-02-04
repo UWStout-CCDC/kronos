@@ -14,6 +14,7 @@ read -p "Enter the SQL username: " SQLUSER
 read -s -p "Enter the SQL password: " SQLPASSWORD
 clear
 
+
 # Check if they want to 1 break authentication, or 2 change the admin password
 echo "What would you like to do?"
 echo "1. Break authentication"
