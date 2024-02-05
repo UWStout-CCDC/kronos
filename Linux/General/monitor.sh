@@ -109,16 +109,24 @@ getScripts() {
     fi
 
     wget -O $script_path/aide.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/aide.sh
+    wget -O $script_path/connections.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/aliases.sh
     wget -O $script_path/connections.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/connections.sh
+    wget -O $script_path/aliases.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/cron.sh
     wget -O $script_path/fileChanges.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/fileChanges.sh
     wget -O $script_path/logins.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/logins.sh
+    wget -O $script_path/monitor.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/packages.sh
     wget -O $script_path/processes.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/processes.sh
+    wget -O $script_path/monitor.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/users.sh
 
     chmod +x $script_path/aide.sh
+    chmod +x $script_path/aliases.sh
     chmod +x $script_path/connections.sh
+    chmod +x $script_path/cron.sh
     chmod +x $script_path/fileChanges.sh
     chmod +x $script_path/logins.sh
+    chmod +x $script_path/packages.sh
     chmod +x $script_path/processes.sh
+    chmod +x $script_path/users.sh
 }
 
 # Call the display_menu function when the script is executed
@@ -131,7 +139,7 @@ fi
 
 #if script_path is empty, then get the scripts
 if [ -z "$(ls -A $script_path)" ]; then
-    echo -e "\e[32mGetting scripts\e[0m"
+    echo -e "\e[32mScripts not found, getting scripts\e[0m"
     getScripts
 fi
 
