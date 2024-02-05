@@ -128,7 +128,7 @@ run() {
 tput civis
 
 if [ ! -f "temp2" ] && [ ! -f "temp3" ]; then
-    md5sum /etc/passwd /etc/group /etc/profile md5sum /etc/sudoers /etc/hosts /etc/ssh/ssh_config /etc/ssh/sshd_config > temp2
+    md5sum /etc/passwd /etc/group /etc/profile /etc/sudoers /etc/hosts /etc/ssh/ssh_config /etc/ssh/sshd_config > temp2
     ls -a /etc/ /usr/ /sys/ /home/ /bin/ /etc/ssh/ >> temp2
 fi
 
