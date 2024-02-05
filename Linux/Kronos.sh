@@ -7,7 +7,6 @@ highlight=${highlight_color::-1}
 
 scriptLocation="/ccdc/scripts/"
 githubURL="https://raw.githubusercontent.com/UWStout-CCDC/kronos/master/"
-# scriptLocation="/ccdc/scripts/linux/kronos/"
 
 #Print the Loading Screen
 loadingScreen() {

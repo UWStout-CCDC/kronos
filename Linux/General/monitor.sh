@@ -21,6 +21,10 @@ aide() {
     watch -x bash -c "display_options; $script_path/aide.sh"
 }
 
+fileChanges() {
+    watch -x bash -c "display_options; $script_path/fileChanges.sh"
+}
+
 # Function to display the menu with dynamically generated buttons
 display_menu() {
     clear
@@ -124,9 +128,19 @@ run() {
             running_function="processes"
             processes & get_input
             ;;
+        5)
+            running_function="fileChanges"
+            fileChanges & get_input
+            ;;
     esac
 }
 
 # Call the display_menu function when the script is executed
 tput civis
+
+if [ ! -f "temp2" ] && [ ! -f "temp3" ]; then
+    md5sum /etc/passwd /etc/group /etc/profile md5sum /etc/sudoers /etc/hosts /etc/ssh/ssh_config /etc/ssh/sshd_config > temp2
+    ls -a /etc/ /usr/ /sys/ /home/ /bin/ /etc/ssh/ >> temp2
+fi
+
 display_menu
