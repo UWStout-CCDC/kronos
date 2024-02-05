@@ -47,7 +47,7 @@ display_options() {
     echo -e "-------------"
 
     button_index=1
-    button_path="./scripts/monitorScripts"
+    button_path="/ccdc/scripts/monitorScripts"
     terminal_width=$(tput cols)
     separator=" | "
 
