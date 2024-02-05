@@ -124,12 +124,40 @@ run() {
     "$selected_button" & get_input
 }
 
+# Function to get the scripts
+# Add a wget in the same style but changing the script name to add more scripts as needed
+# Note: new script will need to be in the monitorScripts folder of the github
+# Make sure to add a chmod +x to the script as done below to any new scripts or it will have permission issues
+getScripts() {
+    if [ ! -d "$script_path" ]; then
+        mkdir -p "$script_path"
+    fi
+
+    wget -O $script_path/aide.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/aide.sh
+    wget -O $script_path/connections.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/connections.sh
+    wget -O $script_path/fileChanges.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/fileChanges.sh
+    wget -O $script_path/logins.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/logins.sh
+    wget -O $script_path/processes.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/processes.sh
+
+    chmod +x $script_path/aide.sh
+    chmod +x $script_path/connections.sh
+    chmod +x $script_path/fileChanges.sh
+    chmod +x $script_path/logins.sh
+    chmod +x $script_path/processes.sh
+}
+
 # Call the display_menu function when the script is executed
 tput civis
 
 if [ ! -f "temp2" ] && [ ! -f "temp3" ]; then
     md5sum /etc/passwd /etc/group /etc/profile /etc/sudoers /etc/hosts /etc/ssh/ssh_config /etc/ssh/sshd_config > temp2
     ls -a /etc/ /usr/ /sys/ /home/ /bin/ /etc/ssh/ >> temp2
+fi
+
+#if script_path is empty, then get the scripts
+if [ -z "$(ls -A $script_path)" ]; then
+    echo -e "\e[32mGetting scripts\e[0m"
+    getScripts
 fi
 
 display_menu
