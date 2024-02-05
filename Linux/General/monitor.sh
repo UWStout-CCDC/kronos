@@ -3,6 +3,9 @@ getCommandName="System Monitor"
 
 script_path="/ccdc/scripts/monitorScripts"
 
+# Array to store the available buttons
+buttons=()
+
 # Funtions to display login sessions
 logins() {
     watch -x bash -c "display_options; $script_path/logins.sh"
@@ -53,6 +56,8 @@ display_options() {
 
     for button_file in "$button_path"/*.sh; do
         button_name=$(basename "$button_file" .sh)
+        buttons+=("$button_name") # Add button to the array
+
         if [ "$selected" == "$button_index" ]; then
             echo -e "\e[7m$button_index) $button_name\e[0m\c"
         else
@@ -72,6 +77,9 @@ display_options() {
     echo "" # Add a new line after the options
     echo "0) Exit"
     echo "=-=-=-=-=-=-="
+
+    # Store the buttons array in a file
+    # printf '%s\n' "${buttons[@]}" > "$button_path/buttons.txt"
 }
 typeset -fx display_options
 
@@ -111,28 +119,9 @@ get_input() {
 
 # Function to run the selected function
 run() {
-    case "$1" in
-        1)
-            running_function="aide"
-            aide & get_input
-            ;;
-        2)
-            running_function="connections"
-            connections & get_input
-            ;;
-        3)
-            running_function="logins"
-            logins & get_input
-            ;;
-        4)
-            running_function="processes"
-            processes & get_input
-            ;;
-        5)
-            running_function="fileChanges"
-            fileChanges & get_input
-            ;;
-    esac
+    selected_button="${buttons[$1-1]}"
+    running_function="$selected_button"
+    "$selected_button" & get_input
 }
 
 # Call the display_menu function when the script is executed
