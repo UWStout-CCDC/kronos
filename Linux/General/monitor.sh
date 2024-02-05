@@ -1,7 +1,7 @@
 #!/bin/bash
 getCommandName="System Monitor"
 
-script_path="./scripts/monitorScripts"
+script_path="/ccdc/scripts/monitorScripts"
 
 # Funtions to display login sessions
 logins() {
