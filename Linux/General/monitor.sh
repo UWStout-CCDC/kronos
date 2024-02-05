@@ -6,28 +6,6 @@ script_path="/ccdc/scripts/monitorScripts"
 # Array to store the available buttons
 buttons=()
 
-# Funtions to display login sessions
-logins() {
-    watch -x bash -c "display_options; $script_path/logins.sh"
-}
-
-# Function to display the current active connections
-connections() {
-    watch -x bash -c "display_options; $script_path/connections.sh"
-}
-
-processes() {
-    watch -x bash -c "display_options; $script_path/processes.sh"
-}
-
-aide() {
-    watch -x bash -c "display_options; $script_path/aide.sh"
-}
-
-fileChanges() {
-    watch -x bash -c "display_options; $script_path/fileChanges.sh"
-}
-
 # Function to display the menu with dynamically generated buttons
 display_menu() {
     clear
@@ -77,9 +55,6 @@ display_options() {
     echo "" # Add a new line after the options
     echo "0) Exit"
     echo "=-=-=-=-=-=-="
-
-    # Store the buttons array in a file
-    # printf '%s\n' "${buttons[@]}" > "$button_path/buttons.txt"
 }
 typeset -fx display_options
 
@@ -117,11 +92,11 @@ get_input() {
     esac
 }
 
-# Function to run the selected function
+# Function to run the selected function dynamically
 run() {
     selected_button="${buttons[$1-1]}"
     running_function="$selected_button"
-    "$selected_button" & get_input
+    watch -x bash -c "display_options; "$script_path"/"$selected_button".sh" & get_input
 }
 
 # Function to get the scripts
