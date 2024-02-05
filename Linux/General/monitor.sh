@@ -77,14 +77,14 @@ get_input() {
             selected="$key"
             run "$key"
             ;;
-        "A")  # Up arrow key
-            selected=$(( (selected - 2 + 3) % 3 + 1 ))
+        "D")  # Left arrow key
+            selected=$(( (selected - 2 + ${#buttons[@]}) % ${#buttons[@]} + 1 ))
             ;;
-        "B")  # Down arrow key
-            selected=$(( (selected % 3) + 1 ))
+        "C")  # Right arrow key
+            selected=$(( (selected % ${#buttons[@]}) + 1 ))
             ;;
         "")
-                run "$selected"
+            run "$selected"
             ;;
         *)
             # Ignore other keys
@@ -109,14 +109,14 @@ getScripts() {
     fi
 
     wget -O $script_path/aide.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/aide.sh
-    wget -O $script_path/connections.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/aliases.sh
+    wget -O $script_path/aliases.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/aliases.sh
     wget -O $script_path/connections.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/connections.sh
-    wget -O $script_path/aliases.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/cron.sh
+    wget -O $script_path/cron.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/cron.sh
     wget -O $script_path/fileChanges.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/fileChanges.sh
     wget -O $script_path/logins.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/logins.sh
-    wget -O $script_path/monitor.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/packages.sh
+    wget -O $script_path/packages.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/packages.sh
     wget -O $script_path/processes.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/processes.sh
-    wget -O $script_path/monitor.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/users.sh
+    wget -O $script_path/users.sh https://raw.githubusercontent.com/UWStout-CCDC/kronos/main/Linux/General/monitorScripts/users.sh
 
     chmod +x $script_path/aide.sh
     chmod +x $script_path/aliases.sh

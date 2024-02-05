@@ -1,4 +1,5 @@
 #!/bin/bash
 
-echo -e "\n"
+echo -e "ACTIVE PROCCESSES:\n"
+echo -e "------------------\n"
 ps -aux
