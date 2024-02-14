@@ -143,4 +143,34 @@ if [ -z "$(ls -A $script_path)" ]; then
     getScripts
 fi
 
+# check which package manager is installed and install net-tools and psmisc if not installed
+if [ -z "$(which apt)" ]; then
+    if [ -z "$(which yum)" ]; then
+        if [ -z "$(which dnf)" ]; then
+            echo -e "\e[31mNo package manager found\e[0m"
+        else
+            if [ -z "$(which netstat)" ]; then
+                dnf install net-tools -y
+            fi
+            if [ -z "$(which pstree)" ]; then
+                dnf install psmisc -y
+            fi
+        fi
+    else
+        if [ -z "$(which netstat)" ]; then
+            yum install net-tools -y
+        fi
+        if [ -z "$(which pstree)" ]; then
+            yum install psmisc -y
+        fi
+    fi
+else
+    if [ -z "$(which netstat)" ]; then
+        apt install net-tools -y
+    fi
+    if [ -z "$(which pstree)" ]; then
+        apt install psmisc -y
+    fi
+fi
+
 display_menu
