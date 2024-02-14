@@ -117,7 +117,7 @@ server_splunk=$(prompt "Does the machine have a splunk server?" n)
 clear
 
 # Ask if they want to install splunk
-if [[ !$server_splunk ]] then
+if [[ !$server_splunk ]]; then
     SPLUNK_SCRIPT=$(get linux/splunk-forward.sh)
     installSplunkForward=$(prompt "Do you wish to install Splunk Forwarder?" y)
 fi
