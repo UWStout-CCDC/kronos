@@ -643,6 +643,7 @@ while true; do
     tput cup $(( $(tput lines) - 3 )) 0
     if [[ $selection == $numCommands ]]; then
         tput cnorm
+        reset
         exit 1
     # elif [ $selection == $(($numCommands - 1)) ] && [ $kronosNeedsInit == false ]; then
     elif [[ ${commands[$(($selection - 1))]} == "Initialize Kronos" ]]; then
