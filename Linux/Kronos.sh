@@ -208,7 +208,7 @@ kronosInit() {
     fi
     # Install the init script from github
 
-    wget -q $githubURL/Linux/General/init.sh --directory-prefix "$scriptLocation" --show-progress || echo "Failed to install Kronos Init"
+    wget -q $githubURL/Linux/General/init.sh --directory-prefix "$scriptLocation" || echo "Failed to install Kronos Init"
     # Install the init script from github
     $kronosNeedsInit = false
 }
@@ -579,7 +579,7 @@ scriptInstall() {
                 for (( i=0; i<${#installScripts[@]}; i++ )); do
                     echo "Downloading ${scriptNames[$i]}"
                     # wget -q https://raw.githubusercontent.com/CCDC-Tools/Kronos/master/${installScripts[$i]} --directory-prefix "$scriptLocation" --show-progress 2>&1 || echo "Failed to install ${scriptNames[$i]}"
-                    wget -q $githubURL/${installScripts[$i]} --directory-prefix "$scriptLocation" --show-progress || echo "Failed to install ${scriptNames[$i]}"
+                    wget -q $githubURL/${installScripts[$i]} --directory-prefix "$scriptLocation" || echo "Failed to install ${scriptNames[$i]}"
                 done
 
                 # Make all scripts in the directory executable
@@ -642,6 +642,7 @@ while true; do
     tput cup $(( $(tput lines) - 3 )) 0
     if [[ $selection == $numCommands ]]; then
         tput cnorm
+        reset
         exit 1
     # elif [ $selection == $(($numCommands - 1)) ] && [ $kronosNeedsInit == false ]; then
     elif [[ ${commands[$(($selection - 1))]} == "Initialize Kronos" ]]; then
