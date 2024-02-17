@@ -184,6 +184,7 @@ fi
 
 # If /var/lib/aide/aide.db.gz does not exist
 if [ ! -f "/var/lib/aide/aide.db.gz" ]; then
+    echo "Creating aide database, this may take a few minutes"
     aide --init
     mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
 fi
