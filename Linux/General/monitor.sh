@@ -182,4 +182,10 @@ else
     fi
 fi
 
+# If /var/lib/aide/aide.db.gz does not exist
+if [ ! -f "/var/lib/aide/aide.db.gz" ]; then
+    aide --init
+    mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+fi
+
 display_menu
