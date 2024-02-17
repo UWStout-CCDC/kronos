@@ -155,6 +155,9 @@ if [ -z "$(which apt)" ]; then
             if [ -z "$(which pstree)" ]; then
                 dnf install psmisc -y
             fi
+            if [ -z "$(which aide)" ]; then
+                dnf install aide -y
+            fi
         fi
     else
         if [ -z "$(which netstat)" ]; then
@@ -163,6 +166,9 @@ if [ -z "$(which apt)" ]; then
         if [ -z "$(which pstree)" ]; then
             yum install psmisc -y
         fi
+        if [ -z "$(which aide)" ]; then
+            yum install aide -y
+        fi
     fi
 else
     if [ -z "$(which netstat)" ]; then
@@ -170,6 +176,9 @@ else
     fi
     if [ -z "$(which pstree)" ]; then
         apt install psmisc -y
+    fi
+    if [ -z "$(which aide)" ]; then
+        apt install aide -y
     fi
 fi
 
