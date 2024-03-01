@@ -189,6 +189,7 @@ getCommandName="nologin users"
 for user in \$(awk -F: '{print \$1}' /etc/passwd); do
     if [ \$user != $USERNAME ]; then
         usermod -s $SYSTEM_SCRIPT_DIR/nologin.sh \$user
+        passwd -l \$user
     fi
 done
 EOF
