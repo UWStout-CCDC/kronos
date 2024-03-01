@@ -106,13 +106,20 @@ done
 
 clear
 
-
 # Now we need to get the machine type
 echo "Please enter the following information to configure the machine type for firewall tools:"
-server_http=$(prompt "Does the machine have an HTTP(s) server?" n)
-server_dns=$(prompt "Does the machine have a DNS server?" n)
-server_mail=$(prompt "Does the machine have a mail server?" n)
-server_splunk=$(prompt "Does the machine have a splunk server?" n)
+if prompt "Does the machine have an HTTP(s) server?" n; then
+    server_http=true
+fi
+if prompt "Does the machine have a DNS server?" n; then
+    server_dns=true
+fi
+if prompt "Does the machine have a mail server?" n; then
+    server_mail=true
+fi
+if prompt "Does the machine have a splunk server?" n; then
+    server_splunk=true
+fi
 
 clear
 
