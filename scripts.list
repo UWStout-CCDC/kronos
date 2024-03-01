@@ -1,2 +1,3 @@
 Change Admin Password,Linux/CentOS-Ecomm/ecommChangeAdmin.sh,ecomm,fedora
 Monitor,Linux/General/monitor.sh,General,debian;fedora;Ubuntu
+Take Snapshot,Linux/CentOS-Ecomm/snapshot.sh,ecomm,fedora
