@@ -16,12 +16,6 @@ echo "----------------------"
 echo "Users with sudo privs:"
 cat /ccdc/sudoers.txt
 
-sleep 5
-clear
-
 echo "----------------------"
 echo "SUID binaries:"
 cat /ccdc/suid.txt
-
-sleep 5
-clear
