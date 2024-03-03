@@ -6,6 +6,9 @@ getent passwd | grep '0:0' | cut -d':' -f1 > /ccdc/uid0.txt
 # Find all users w/ sudo privs
 grep -E '^[^#%@]*\b(ALL|(S|s)udoers)\b' /etc/sudoers > /ccdc/sudoers.txt
 
+# SUID binaries
+find / -uid 0 -perm -4000 2>/dev/null > /ccdc/suid.txt
+
 echo "UID 0 accounts:"
 cat /ccdc/uid0.txt
 
@@ -16,8 +19,7 @@ cat /ccdc/sudoers.txt
 sleep 5
 clear
 
-# SUID binaries
-find / -uid 0 -perm -4000 2>/dev/null > /ccdc/suid.txt
+
 
 echo "----------------------"
 echo "SUID binaries:"
